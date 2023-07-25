@@ -1,4 +1,9 @@
-function [p] = HDM_getParameters()
+function [p] = HDM_getParameters(isContaminated)
+
+if ~exist('isContaminated', 'var')
+    isContaminated = 1;
+end
+p.contaminated = isContaminated;
 
 %% basic parameters
 p.D = 6;  % number of depth levels

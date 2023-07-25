@@ -1,0 +1,38 @@
+function [signal_clean, stimulus_estimate] = HDM_decontaminate(data, plotFlag)
+
+%% get decontaminated signal
+[stimulus_estimate, ~, ~] = HDM_solveInverse(data);
+[signal_clean] = HDM_solveForward(stimulus_estimate, 'clean');
+
+%% get noise
+% get data structure
+p = HDM_getParameters();
+dt_data = p.seq.TR;
+s = size(data); nT_data = s(end); clear 's';
+T_total = nT_data*dt_data;
+% match model to data
+indice_data = round([dt_data/p.dt:dt_data/p.dt:T_total/p.dt]);  % corresponding indice in model
+signal_clean_lo = signal_clean(:, indice_data);
+% get noise by substraction
+noise = data - signal_clean_lo;
+
+%% plot
+if exist('plotFlag', '
+t_data = [dt_data:dt_data:T_total];
+t_signal = [p.dt:p.dt:size(signal_clean,2)*p.dt];
+figure;
+for d = 1:p.D
+    subplot(p.D,1,d);
+    plot(t_hi, signal_clean(d,1:size(signal_estimate,2))); hold on;
+    plot(t_lo, signal_noisy(d,:));
+    plot(t_hi, signal_estimate(d,:));
+    if d==1
+        legend('clean', 'noisy', 'estimate');
+    end
+end
+
+
+
+
+end
+
