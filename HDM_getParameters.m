@@ -1,5 +1,10 @@
 function [p] = HDM_getParameters(isContaminated)
+%% function [p] = HDM_getParameters(isContaminated)
+% function to obtain parameters-object
+% contains all parameters as given in Havlicek2020
+% NOTE: HDM_solveForward_rewritten4fit calls HDM_getParameters directly
 
+%% check if model shall be "contaminated" (by inflow effects) or "clean" (no inflow effects)
 if ~exist('isContaminated', 'var')
     isContaminated = 1;
 end
@@ -17,7 +22,7 @@ p.VEIN = 3;
 p.seq.TR = 1.4;  % [s]
 p.seq.TE = 0.028;  % [s]
 
-%% BOLD parameters (physical and physiological)
+%% BOLD parameters (physics and physiological)
 p.bold.B0 = 7;  % [T]
 p.bold.dXi = 0.000000264;  % susceptibility difference between oxy/deoxy blood
 p.bold.E0 = [0.35, 0.35, 0.35];  % oxygen extraction fraction [arteriole, venule, vein]

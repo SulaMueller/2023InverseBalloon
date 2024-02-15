@@ -1,12 +1,13 @@
-function [stimulus_estimate, t0, T] = HDM_solveInverse(data)
+function [stimulus_estimate, t0, T] = HDM_solveInverse(p, data)
+%% function [stimulus_estimate, t0, T] = HDM_solveInverse(p, data)
 % data should be [D, nT]
+% note: HDM_solveForward_rewritten4fit calls HDM_getParameters directly
 
 %% get data structure
-p = HDM_getParameters();
 dt_data = p.seq.TR;
-s = size(data); nT_data = s(end); clear 's';
+s = size(data); nT_data = s(end); clear 's';  % get number of time points
 T_total = nT_data*dt_data;
-% turn data into 1D array
+% turn data into 1D array for fit function
 data1D = reshape(data',[nT_data*p.D,1]);
 t_axis1D = [dt_data:dt_data:T_total*p.D]';
 
@@ -24,7 +25,7 @@ f = fit( t_axis1D, data1D, ft );
 t2 = datetime('now');
 disp(strcat("Fit complete. Required time: ", string(between(t1,t2))));
 
-%% plot result
+%% display result
 % figure; plot(f, t_axis, data(1,:)');
 t0 = [f.t01, f.t02, f.t03, f.t04, f.t05, f.t06]; 
 T = [f.T1, f.T2, f.T3, f.T4, f.T5, f.T6];

@@ -12,7 +12,7 @@ onset     = 3/P.N.dt;         % Stimulus onset time (in seconds)
 offset    = onset + dur;      % Stimulus offset time (in seconds) 
 U.u       = zeros(P.N.T/P.N.dt,K);   % Matrix with input vectors to the neuronal model (one column per depth)
 U.u(onset:offset,:) = 1;             % Set one during stimulus window
-signal_clean = HDM_solveForward(U.u');
+p = HDM_getParameters();
+signal_clean = HDM_solveForward(p, U.u');
 disp(strcat("Forward complete. Required time: ", string(between(t1,datetime('now')))));
-
-HDM_plotD('', signal_clean, LBR','mine', 'H');
+HDM_plotD(p.D, '', signal_clean, LBR','mine', 'H');

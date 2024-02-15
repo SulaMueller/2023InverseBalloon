@@ -1,4 +1,3 @@
-
 clear all; close all; clc;
 
 %% ===============  test decontamination on noisy data  ===================
@@ -13,16 +12,8 @@ nT_data = floor(nT_model/dt_data*p.dt);
 indice_data = [dt_data/p.dt:dt_data/p.dt:nT_data*dt_data/p.dt];  % indice in model
 
 %% define stimulus; get clean signal
-stimulus_clean = zeros([p.D,nT_model]);
-t0 = [3.50, 3.60, 3.70, 5.00, 6.00, 1];
-T = [1.50, 1.50, 1.00, 5.00, 6.00, 0];
-i0 = round(t0/p.dt);
-i1 = round((t0+T)/p.dt)-1;
-for d = 1:p.D
-    stimulus_clean(d, i0(d):i1(d)) = 1;
-end
-
-signal_clean = HDM_solveForward(stimulus_clean);
+[stimulus_clean, t0, T] = generateTestStimulus(p, nT_model);
+signal_clean = HDM_solveForward(p, stimulus_clean);
 signal_clean_lo = signal_clean(:, indice_data);
 
 %% create noisy data
@@ -32,10 +23,13 @@ disp(['noise = [', num2str(max(noise(:))), ', ', num2str(min(noise(:))), ']']);
 signal_noisy = signal_clean_lo + noise;
 
 %% test decontaminate
-[signal_decontaminated, stimulus_estimate, noise_estimate] = HDM_decontaminate(signal_noisy, 1, 'decontamination test');
+[signal_decontaminated, stimulus_estimate, noise_estimate] = HDM_decontaminate(p, signal_noisy, 1, 'decontamination demo');
 
-HDM_plotD('stimuli', stimulus_clean, stimulus_estimate, 'original', 'estimate');
-signal_clean_decontaminated = HDM_solveForward(stimulus_clean, 'clean');
-HDM_plotD('decontaminated signals', signal_clean_decontaminated, signal_decontaminated, 'original', 'estimate');
+%% plot difference to clean test data
+HDM_plotD(p.D, 'stimuli', stimulus_clean, stimulus_estimate, 'original', 'estimate');
+p.contaminated = 0;
+signal_clean_decontaminated = HDM_solveForward(p, stimulus_clean);
+HDM_plotD(p.D, 'decontaminated signals', signal_clean_decontaminated, signal_decontaminated, 'original', 'estimate');
+
 
 

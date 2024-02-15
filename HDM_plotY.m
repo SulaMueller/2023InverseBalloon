@@ -1,22 +1,29 @@
-function [] = HDM_plotY(y)
+function [] = HDM_plotY(D, y)
+%% function [] = HDM_plotY(D, y)
+% function to plot all info contained in Y (state matrix for all state
+% variables at all time points; for definition view HDM_solveForward)
 
-p = HDM_getParameters();
-
+%% define structure of Y
+% '-', if preceding variable needs two slots (venule/vein)
 titles = {'n_{excitation}', 'n_{inhibition}', 'vaso', 'f_{arteriole}', 'f', '-', 'v', '-', 'q', '-', 'signal'};
+
+%% plot
 for f = 1:length(titles)
-    if strcmpi(titles{f},'-')
+    if strcmpi(titles{f},'-')  % has been plotted in preceding loop
         continue;
     end
     figure;
-    for d = 1:p.D
-        subplot(p.D,1,d);
+    for d = 1:D
+        subplot(D,1,d);
         if ~any(strcmpi(titles{f}, {'f','v','q'}))
-            plot(y(d+(f-1)*p.D,:));
+            plot(y(d+(f-1)*D,:),'LineWidth',4);
         else
-            plot(y(d+(f-1)*p.D,:), 'color','magenta');
-            plot(y(d+(f-1)*p.D+p.D,:), 'color','blue');
+            plot(y(d+(f-1)*D,:), 'color','magenta','LineWidth',4);  % venule
+            plot(y(d+(f-1)*D+D,:), 'color','blue','LineWidth',4);  % vein
         end
-        title(titles{f});
+        if d==1
+            title(titles{f});
+        end
     end
 end
 
